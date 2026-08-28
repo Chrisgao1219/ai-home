@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent 教程中心</title>
+<meta name="description" content="从安装到上手，一套完整的 AI Agent 学习路径：Claude Code、WorkBuddy、Codex、Skill、工作流、浏览器自动化、TT Bridge。">
+<style>
+  :root {
+    --accent: #334155;
+    --accent-strong: #1e293b;
+    --accent-soft: #eef1f5;
+    --bg: #f6f7f9;
+    --card: #ffffff;
+    --text: #1a1e24;
+    --text-dim: #6b7280;
+    --border: #e5e7eb;
+    --border-strong: #d1d5db;
+    --shadow: 0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04);
+    --radius: 14px;
+  }
+  [data-theme="dark"] {
+    --accent: #94a3b8;
+    --accent-strong: #cbd5e1;
+    --accent-soft: #1f242c;
+    --bg: #111418;
+    --card: #191d24;
+    --text: #e9edf2;
+    --text-dim: #9aa3b0;
+    --border: #2a2f38;
+    --border-strong: #3a414d;
+    --shadow: 0 1px 3px rgba(0,0,0,.4);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* 顶部栏 */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: color-mix(in srgb, var(--card) 90%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar-inner {
+    max-width: 1080px; margin: 0 auto; padding: 14px 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15.5px; white-space: nowrap; }
+  .logo .logo-mark { width: 24px; height: 24px; flex-shrink: 0; }
+  .spacer { flex: 1; }
+  .icon-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px;
+    border: 1px solid var(--border); background: var(--card); color: var(--text-dim);
+    border-radius: 9px; cursor: pointer; transition: color .2s, border-color .2s;
+  }
+  .icon-btn:hover { color: var(--text); border-color: var(--border-strong); }
+  [data-theme="light"] .icon-sun { display: none; }
+  [data-theme="dark"] .icon-moon { display: none; }
+
+  /* Hero */
+  .hero {
+    max-width: 1080px; margin: 0 auto; padding: 64px 24px 12px;
+    text-align: center;
+  }
+  .hero .eyebrow {
+    display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--accent-strong);
+    background: var(--accent-soft); border-radius: 999px; padding: 4px 14px;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: 40px; font-weight: 800; letter-spacing: -.03em; line-height: 1.15;
+    margin: 0 0 16px;
+  }
+  .hero p { color: var(--text-dim); font-size: 16px; max-width: 620px; margin: 0 auto; }
+  .hero .count {
+    margin-top: 22px; font-size: 13px; color: var(--text-dim);
+  }
+
+  /* 分组标题 */
+  .group-label {
+    max-width: 1080px; margin: 44px auto 0; padding: 0 24px;
+    font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .group-label span { color: var(--accent-strong); }
+
+  /* 卡片网格 */
+  .grid {
+    max-width: 1080px; margin: 0 auto; padding: 20px 24px 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    display: flex; align-items: center; gap: 16px;
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 18px 18px; text-decoration: none; color: inherit;
+    transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+  }
+  .card:hover { transform: translateY(-2px); border-color: var(--border-strong); box-shadow: var(--shadow); }
+  .card-icon {
+    width: 48px; height: 48px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 12px; background: var(--c, var(--accent));
+    font-size: 22px;
+  }
+  .card-body { flex: 1; min-width: 0; }
+  .card-title { font-weight: 700; font-size: 15.5px; margin-bottom: 3px; }
+  .card-desc { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+  .card-num {
+    font-size: 12px; font-weight: 700; color: var(--text-dim);
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 2px 9px; flex-shrink: 0;
+  }
+  .card:hover .card-num { color: var(--accent-strong); border-color: var(--accent-strong); }
+
+  /* 页脚 */
+  .footer {
+    max-width: 1080px; margin: 0 auto; padding: 40px 24px 64px;
+    text-align: center; color: var(--text-dim); font-size: 13px;
+  }
+  .footer a { color: var(--text-dim); }
+
+  @media (max-width: 700px) {
+    .hero { padding: 44px 20px 8px; }
+    .hero h1 { font-size: 30px; }
+    .grid { padding: 16px 16px 20px; grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="logo">
+      <svg class="logo-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6" fill="var(--accent)"/><path d="M7.5 12.2l3 3 6-6" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>AI Agent 教程中心</span>
+    </div>
+    <div class="spacer"></div>
+    <button class="icon-btn" id="themeToggle" title="切换明暗主题" aria-label="切换明暗主题">
+      <svg class="icon-moon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <span class="eyebrow">AI Agent 学习路径</span>
+    <h1>从安装到上手，<br>一套完整的 AI 教程</h1>
+    <p>Claude Code、WorkBuddy、Codex、Skill、工作流、浏览器自动化、TT Bridge——按顺序学，每一步都能落地。</p>
+    <div class="count">📚 共 12 篇 · 建议从「安装篇」开始，按编号顺序学习</div>
+  </section>
+
+  <div class="group-label"><span>安装篇</span> — 先把工具装上</div>
+  <section class="grid">
+    <a class="card" href="https://chrisgao1219.com/claude-code-guide/" style="--c:#b45309">
+      <div class="card-icon">🐙</div>
+      <div class="card-body">
+        <div class="card-title">Claude Code 安装教程</div>
+        <div class="card-desc">终端 AI 编程助手，装软件 → 配置模型 → 用起来</div>
+      </div>
+      <div class="card-num">01</div>
+    </a>
+    <a class="card" href="https://chrisgao1219.com/workbuddy-guide/" style="--c:#0e9f6e">
+      <div class="card-icon">🤖</div>
+      <div class="card-body">
+        <div class="card-title">WorkBuddy 安装教程</div>
+        <div class="card-desc">腾讯 AI 桌面工作台，微信登录即用，送 2000 积分</div>
+      </div>
+      <div class="card-num">02</div>
+    </a>
+    <a class="card" href="https://chrisgao1219.com/codex-guide/" style="--c:#2563eb">
+      <div class="card-icon">⚡</div>
+      <div class="card-body">
+        <div class="card-title">Codex 安装教程</div>
+        <div class="card-desc">ChatGPT 桌面版，含接入 DeepSeek 的省钱方案</div>
+      </div>
+      <div class="card-num">03</div>
+    </a>
+  </section>
+
+  <div class="group-label"><span>认知篇</span> — 搞懂再动手</div>
+  <section class="grid">
+    <a class="card" href="https://chrisgao1219.com/ai-selection-guide/" style="--c:#7c3aed">
+      <div class="card-icon">🧭</div>
+      <div class="card-body">
+        <div class="card-title">如何选择 AI 软件</div>
+        <div class="card-desc">WorkBuddy / Codex / Claude Code 怎么选</div>
+      </div>
+      <div class="card-num">04</div>
+    </a>
+    <a class="card" href="https://chrisgao1219.com/ai-agent-basics/" style="--c:#0d9488">
+      <div class="card-icon">🎓</div>
+      <div class="card-body">
+        <div class="card-title">AI Agent 知识扫盲</div>
+        <div class="card-desc">上手前必懂的 12 个知识点 + 8 步清单</div>
+      </div>
+      <div class="card-num">05</div>
+    </a>
+    <a class="card" href="https://chrisgao1219.com/skill-guide/" style="--c:#db2777">
+      <div class="card-icon">🧩</div>
+      <div class="card-body">
+        <div class="card-title">如何理解 & 安装 Skill</div>
+        <div class="card-desc">技能包装在哪、四种安装方法、常见坑</div>
+      </div>
+      <div class="card-num">06</div>
+    </a>
+    <a class="card" href="https://chrisgao1219.com/workflow-guide/" style="--c:#d97706">
+      <div class="card-icon">🔄</div>
+      <div class="card-body">
+        <div class="card-title">如何拆解工作流</div>
+        <div class="card-desc">把重复任务拆成 SOP，四步法 + 自查清单</div>
+      </div>
+      <div class="card-num">07</div>
+    </a>
+    <a class="card" href="https://chrisgao1219.com/browser-auto-guide/" style="--c:#dc2626">
+      <div class="card-icon">🌐</div>
+      <div class="card-body">
+        <div class="card-title">浏览器自动化扫盲</div>
+        <div class="card-desc">让 AI 替你点网页，工具一览 + 避坑指南</div>
+      </div>
+      <div class="card-num">08</div>
+    </a>
+    <a class="card" href="https://chrisgao1219.com/skill-migration-guide/" style="--c:#4f46e5">
+      <div class="card-icon">⇄</div>
+      <div class="card-body">
+        <div class="card-title">技能迁移能力</div>
+        <div class="card-desc">一通百通：抓住骨架，替换元素</div>
+      </div>
+      <div class="card-num">09</div>
+    </a>
+    <a class="card" href="https://chrisgao1219.com/tools-migration-guide/" style="--c:#64748b">
+      <div class="card-icon">🧰</div>
+      <div class="card-body">
+        <div class="card-title">工具能力的迁移性</div>
+        <div class="card-desc">所有 AI 工具都一样，学会一类通用</div>
+      </div>
+      <div class="card-num">10</div>
+    </a>
+  </section>
+
+  <div class="group-label"><span>实战篇</span> — 上手干活</div>
+  <section class="grid">
+    <a class="card" href="https://chrisgao1219.com/tt-bridge-guide/" style="--c:#0891b2">
+      <div class="card-icon">🌉</div>
+      <div class="card-body">
+        <div class="card-title">TT Bridge 使用指南</div>
+        <div class="card-desc">让 AI 操控浏览器，四个真实案例</div>
+      </div>
+      <div class="card-num">11</div>
+    </a>
+    <a class="card" href="https://chrisgao1219.com/tt-bridge-post-guide/" style="--c:#a16207">
+      <div class="card-icon">📤</div>
+      <div class="card-body">
+        <div class="card-title">TT Bridge 自动发帖</div>
+        <div class="card-desc">海外社媒自动发帖，宝宝级教程</div>
+      </div>
+      <div class="card-num">12</div>
+    </a>
+  </section>
+</main>
+
+<footer class="footer">
+  <a href="https://chrisgao1219.com/">chrisgao1219.com</a> · AI Agent 教程中心 · 生成于 2026-08-28
+</footer>
+
+<script>
+(function () {
+  var themeToggle = document.getElementById('themeToggle');
+  var saved = localStorage.getItem('ai-home-theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+  themeToggle.addEventListener('click', function () {
+    var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', cur);
+    localStorage.setItem('ai-home-theme', cur);
+  });
+})();
+</script>
+</body>
+</html>
