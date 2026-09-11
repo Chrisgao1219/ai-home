@@ -5,6 +5,40 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI 学习中心</title>
 <meta name="description" content="从安装到上手，一套完整的 AI 学习路径：Claude Code、WorkBuddy、Codex、Skill、工作流、浏览器自动化、TT Bridge。">
+
+<!-- 主题预设：在首次绘制前定下明暗，避免深色模式闪白；首次访问跟随系统偏好 -->
+<script>
+(function () {
+  try {
+    var t = localStorage.getItem('ai-home-theme');
+    if (t !== 'light' && t !== 'dark') {
+      t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+})();
+</script>
+
+<!-- 图标 -->
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<meta name="theme-color" content="#f6f7f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111418" media="(prefers-color-scheme: dark)">
+
+<!-- 分享预览 -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AI 学习中心">
+<meta property="og:title" content="AI 学习中心 · 从安装到上手">
+<meta property="og:description" content="Claude Code、WorkBuddy、Codex、Skill、工作流、浏览器自动化、TT Bridge——按顺序学，每一步都能落地。">
+<meta property="og:url" content="https://ai.chrisgao1219.com/">
+<meta property="og:image" content="https://ai.chrisgao1219.com/avatar.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AI 学习中心 · 从安装到上手">
+<meta name="twitter:description" content="Claude Code、WorkBuddy、Codex、Skill、工作流、浏览器自动化、TT Bridge——按顺序学，每一步都能落地。">
+<meta name="twitter:image" content="https://ai.chrisgao1219.com/avatar.jpg">
+<link rel="canonical" href="https://ai.chrisgao1219.com/">
+
 <style>
   :root {
     --accent: #334155;
@@ -44,8 +78,9 @@
   /* 顶部栏 */
   .topbar {
     position: sticky; top: 0; z-index: 100;
+    background: var(--card);                                          /* 回退：不支持 color-mix 的浏览器 */
     background: color-mix(in srgb, var(--card) 90%, transparent);
-    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--border);
   }
   .topbar-inner {
@@ -81,6 +116,7 @@
 
   /* 视频卡片：button 形态 */
   button.card { font: inherit; text-align: left; cursor: pointer; width: 100%; }
+  .card:focus-visible { outline: 2px solid var(--c, var(--accent)); outline-offset: 2px; }
   .card-play {
     flex-shrink: 0; width: 28px; height: 28px;
     display: flex; align-items: center; justify-content: center;
@@ -143,7 +179,7 @@
   /* 分组标题 */
   .group-label {
     max-width: 1080px; margin: 44px auto 0; padding: 0 24px;
-    font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    font-size: 13px; font-weight: 700; letter-spacing: .04em;
     color: var(--text-dim);
   }
   .group-label span { color: var(--accent-strong); }
@@ -429,12 +465,19 @@
 <script>
 (function () {
   var themeToggle = document.getElementById('themeToggle');
-  var saved = localStorage.getItem('ai-home-theme');
-  if (saved) document.documentElement.setAttribute('data-theme', saved);
+
+  /* 主题已由 <head> 的预设脚本定好，这里只把状态同步给辅助技术 */
+  function syncThemeButton() {
+    themeToggle.setAttribute('aria-pressed',
+      String(document.documentElement.getAttribute('data-theme') === 'dark'));
+  }
+  syncThemeButton();
+
   themeToggle.addEventListener('click', function () {
     var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', cur);
-    localStorage.setItem('ai-home-theme', cur);
+    syncThemeButton();
+    try { localStorage.setItem('ai-home-theme', cur); } catch (e) {}
   });
 
   /* 素材提效视频：点击卡片才创建 iframe，关闭即销毁（避免多个 iframe 拖慢页面） */
@@ -474,7 +517,21 @@
 
   modalClose.addEventListener('click', closeVideo);
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeVideo();
+    if (e.key === 'Escape') { closeVideo(); return; }
+    if (e.key !== 'Tab' || !modal.classList.contains('open')) return;
+
+    /* 焦点陷阱：Tab 只在弹窗内循环，不会跑到背后的页面上。
+       只圈 button，不圈 iframe —— 否则用户点进播放器后无法用键盘操作它 */
+    var f = modal.querySelectorAll('button');
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (!modal.contains(document.activeElement)) {
+      e.preventDefault(); first.focus();
+    } else if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault(); last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault(); first.focus();
+    }
   });
 })();
 </script>
